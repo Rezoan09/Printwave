@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrintWave — Premium Print on Demand</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111118;
+  --white: #ffffff;
+  --off-white: #f8f9ff;
+  --accent: #ff5c35;
+  --accent-hover: #e04420;
+  --accent-light: #ff8a6a;
+  --accent-pale: #fff1ee;
+  --gold: #f4a723;
+  --muted: #64687a;
+  --border: #e8eaf0;
+  --card: #ffffff;
+  --green: #1a7f5a;
+  --green-bg: #e3f7ee;
+  --tag-bg: #fff4f1;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:#fff; color:var(--ink); font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.6; overflow-x:hidden; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(255,255,255,0.96); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  height:64px; padding:0 5vw;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--ink); }
+.nav-logo span { color:var(--accent); }
+.nav-links { display:flex; gap:28px; list-style:none; }
+.nav-links a { text-decoration:none; color:var(--muted); font-size:0.875rem; font-weight:500; transition:color .2s; }
+.nav-links a:hover { color:var(--ink); }
+.nav-cta { background:var(--accent); color:#fff; padding:10px 22px; border-radius:6px; font-size:0.85rem; font-weight:600; border:none; cursor:pointer; transition:background .2s; }
+.nav-cta:hover { background:var(--accent-hover); }
+
+/* HERO */
+.hero {
+  min-height:100vh; padding:120px 5vw 80px;
+  display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+  background:linear-gradient(135deg,#fff8f6 0%,#ffffff 55%,#f0f4ff 100%);
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-20%; right:-5%; width:600px; height:600px;
+  background:radial-gradient(circle,rgba(255,92,53,.09) 0%,transparent 70%);
+  border-radius:50%; pointer-events:none;
+}
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:#fff; border:1.5px solid var(--border); border-radius:100px;
+  padding:5px 14px; font-size:0.78rem; font-weight:600; color:var(--ink);
+  font-family:'Space Mono',monospace; letter-spacing:.04em;
+  margin-bottom:24px; box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.hero-eyebrow::before { content:''; width:7px; height:7px; background:var(--accent); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+.hero h1 { font-family:'DM Serif Display',serif; font-size:clamp(2.6rem,4.5vw,4rem); line-height:1.1; letter-spacing:-.02em; margin-bottom:24px; }
+.hero h1 em { font-style:italic; color:var(--accent); }
+
+/* value pills */
+.hero-pills { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+.vpill {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 16px; border-radius:12px; border:1.5px solid;
+  transition:transform .2s; cursor:default;
+}
+.vpill:hover { transform:translateY(-2px); }
+.vpill.save { background:#fff7ed; border-color:#ffd199; }
+.vpill.fab  { background:#f0fdf8; border-color:#a7f3d0; }
+.vpill-icon { font-size:1.4rem; flex-shrink:0; }
+.vpill-title { font-weight:700; font-size:.88rem; color:var(--ink); line-height:1.2; }
+.vpill-sub   { font-size:.72rem; color:var(--muted); }
+
+.hero-sub { font-size:1rem; color:var(--muted); max-width:480px; line-height:1.75; margin-bottom:36px; }
+.hero-actions { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-primary { background:var(--accent); color:#fff; padding:14px 28px; border-radius:8px; font-size:.95rem; font-weight:600; border:none; cursor:pointer; transition:all .25s; display:inline-flex; align-items:center; gap:8px; }
+.btn-primary:hover { background:var(--accent-hover); transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,92,53,.3); }
+.btn-outline { background:transparent; color:var(--ink); padding:14px 28px; border-radius:8px; font-size:.95rem; font-weight:600; border:2px solid #d0d4e0; cursor:pointer; transition:all .25s; text-decoration:none; }
+.btn-outline:hover { border-color:var(--ink); transform:translateY(-2px); }
+
+.hero-stats { display:flex; gap:32px; margin-top:44px; padding-top:32px; border-top:1px solid var(--border); }
+.stat-num { font-family:'DM Serif Display',serif; font-size:2rem; display:block; }
+.stat-label { font-size:.78rem; color:var(--muted); font-weight:500; }
+
+/* hero card */
+.hero-card { background:#fff; border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.08); }
+.hcard-header { background:linear-gradient(135deg,var(--accent),#ff8a6a); color:#fff; padding:18px 22px; display:flex; align-items:center; justify-content:space-between; }
+.hcard-title { font-family:'DM Serif Display',serif; font-size:1.1rem; }
+.hcard-badge { background:rgba(255,255,255,.25); color:#fff; font-size:.7rem; font-weight:700; padding:3px 10px; border-radius:100px; font-family:'Space Mono',monospace; border:1px solid rgba(255,255,255,.35); }
+.hcard-body { padding:20px; }
+.prod-row { display:flex; gap:14px; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
+.prod-row:last-of-type { border-bottom:none; }
+.prod-swatch { width:46px; height:46px; border-radius:8px; background:var(--off-white); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+.prod-name { font-weight:600; font-size:.88rem; }
+.prod-meta { font-size:.76rem; color:var(--muted); }
+.prod-price { font-family:'Space Mono',monospace; font-size:.88rem; font-weight:700; color:var(--green); margin-left:auto; flex-shrink:0; }
+.ship-notice { background:var(--green-bg); border:1px solid rgba(26,127,90,.2); border-radius:8px; padding:11px 14px; margin-top:14px; font-size:.8rem; color:var(--green); font-weight:500; }
+.moq-bar { margin-top:14px; padding:12px 14px; background:var(--off-white); border-radius:8px; }
+.moq-label { display:flex; justify-content:space-between; font-size:.76rem; font-weight:600; margin-bottom:7px; }
+.moq-track { height:5px; background:var(--border); border-radius:100px; overflow:hidden; }
+.moq-fill { height:100%; width:67%; background:var(--accent); border-radius:100px; }
+
+/* SECTIONS */
+section { padding:80px 5vw; }
+.sec-label { font-family:'Space Mono',monospace; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+.sec-title { font-family:'DM Serif Display',serif; font-size:clamp(1.9rem,3vw,2.8rem); line-height:1.15; letter-spacing:-.02em; margin-bottom:14px; }
+.sec-sub { color:var(--muted); font-size:1rem; max-width:560px; line-height:1.7; }
+
+/* HOW IT WORKS */
+#how-it-works { background:var(--off-white); }
+.steps-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-top:44px; }
+.step-card { background:#fff; padding:28px 22px; }
+.step-num { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--border); line-height:1; margin-bottom:14px; }
+.step-icon { font-size:1.7rem; display:block; margin-bottom:12px; }
+.step-title { font-weight:700; font-size:.95rem; margin-bottom:7px; }
+.step-desc { font-size:.83rem; color:var(--muted); line-height:1.6; }
+.step-time { display:inline-flex; align-items:center; gap:5px; margin-top:12px; font-size:.74rem; font-weight:700; color:var(--accent); font-family:'Space Mono',monospace; background:var(--accent-pale); padding:4px 10px; border-radius:100px; }
+
+/* CATALOG */
+#catalog { background:#fff; }
+.catalog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px; }
+.cat-card { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:transform .25s,box-shadow .25s; cursor:pointer; }
+.cat-card:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(0,0,0,.09); }
+.cat-img { height:170px; background:var(--off-white); display:flex; align-items:center; justify-content:center; font-size:3.8rem; position:relative; }
+.cat-tag { position:absolute; top:12px; right:12px; background:var(--ink); color:#fff; font-size:.68rem; font-weight:700; padding:3px 10px; border-radius:100px; font-family:'Space Mono',monospace; }
+.cat-info { padding:18px; }
+.cat-name { font-weight:700; font-size:.95rem; margin-bottom:3px; }
+.cat-fabric { font-size:.78rem; color:var(--muted); margin-bottom:11px; }
+.cat-pricing { display:flex; justify-content:space-between; align-items:flex-end; }
+.price-cogs { font-size:.73rem; color:var(--muted); }
+.price-sell { font-family:'DM Serif Display',serif; font-size:1.35rem; color:var(--green); }
+.price-margin { background:var(--green-bg); color:var(--green); font-size:.7rem; font-weight:700; padding:4px 10px; border-radius:100px; font-family:'Space Mono',monospace; }
+
+/* PRICING */
+#pricing { background:linear-gradient(135deg,#fff4f0,#fff8f4); }
+.pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px; }
+.price-card { background:#fff; border:2px solid var(--border); border-radius:16px; padding:30px; transition:all .25s; }
+.price-card.featured { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 20px 60px rgba(255,92,53,.25); transform:translateY(-6px); }
+.price-card:hover:not(.featured) { border-color:var(--accent); box-shadow:0 12px 40px rgba(255,92,53,.1); transform:translateY(-3px); }
+.price-tier { font-family:'Space Mono',monospace; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.price-card.featured .price-tier { color:rgba(255,255,255,.8); }
+.price-name { font-family:'DM Serif Display',serif; font-size:1.75rem; margin-bottom:6px; color:var(--ink); }
+.price-card.featured .price-name { color:#fff; }
+.price-moq { font-size:.83rem; color:var(--muted); margin-bottom:22px; }
+.price-card.featured .price-moq { color:rgba(255,255,255,.8); }
+.price-row { display:flex; align-items:baseline; gap:4px; margin-bottom:6px; }
+.price-from { font-size:.78rem; color:var(--muted); }
+.price-card.featured .price-from { color:rgba(255,255,255,.7); }
+.price-amt { font-family:'DM Serif Display',serif; font-size:2.6rem; color:var(--ink); }
+.price-card.featured .price-amt { color:#fff; }
+.price-per { font-size:.83rem; color:var(--muted); }
+.price-card.featured .price-per { color:rgba(255,255,255,.7); }
+.price-margin-tag { font-size:.78rem; font-weight:700; background:var(--accent-pale); color:var(--accent); padding:5px 12px; border-radius:6px; display:inline-block; margin-bottom:22px; }
+.price-card.featured .price-margin-tag { background:rgba(255,255,255,.2); color:#fff; }
+.price-features { list-style:none; }
+.price-features li { font-size:.86rem; padding:7px 0; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; color:var(--muted); }
+.price-card.featured .price-features li { border-bottom-color:rgba(255,255,255,.2); color:rgba(255,255,255,.9); }
+.price-features li::before { content:'✓'; font-weight:700; color:var(--accent); }
+.price-card.featured .price-features li::before { color:#fff; }
+.price-btn { display:block; text-align:center; margin-top:26px; padding:13px; border-radius:8px; font-weight:700; font-size:.9rem; cursor:pointer; transition:all .2s; border:none; text-decoration:none; }
+.price-card:not(.featured) .price-btn { background:var(--accent); color:#fff; }
+.price-card:not(.featured) .price-btn:hover { background:var(--accent-hover); }
+.price-card.featured .price-btn { background:#fff; color:var(--accent); }
+.price-card.featured .price-btn:hover { background:#fff0ed; }
+
+/* ORDER FORM */
+#order { background:var(--off-white); }
+.order-layout { display:grid; grid-template-columns:1fr 380px; gap:44px; margin-top:44px; }
+.form-sec { margin-bottom:28px; }
+.form-sec-title { font-weight:700; font-size:.9rem; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.form-sec-num { width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff; font-size:.7rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-full { grid-column:1/-1; }
+label { display:block; font-size:.82rem; font-weight:600; margin-bottom:5px; }
+input,select,textarea { width:100%; padding:10px 13px; border:1.5px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.9rem; background:#fff; color:var(--ink); transition:border-color .2s; outline:none; }
+input:focus,select:focus,textarea:focus { border-color:var(--accent); }
+textarea { resize:vertical; min-height:80px; }
+.qty-wrap { display:flex; align-items:center; }
+.qty-btn { width:40px; height:42px; border:1.5px solid var(--border); background:var(--off-white); cursor:pointer; font-size:1.1rem; font-weight:700; color:var(--ink); transition:all .2s; }
+.qty-btn:first-child { border-radius:8px 0 0 8px; border-right:none; }
+.qty-btn:last-child  { border-radius:0 8px 8px 0; border-left:none; }
+.qty-btn:hover { background:var(--border); }
+.qty-wrap input { text-align:center; border-radius:0; width:80px; flex-shrink:0; border-left:none; border-right:none; }
+.tc-box { display:flex; gap:12px; align-items:flex-start; padding:18px; background:var(--accent-pale); border-radius:10px; border:1px solid rgba(255,92,53,.2); margin-top:8px; }
+.tc-box input[type=checkbox] { width:17px; height:17px; margin-top:3px; flex-shrink:0; cursor:pointer; accent-color:var(--accent); }
+.tc-box label { font-size:.83rem; margin-bottom:0; cursor:pointer; font-weight:400; }
+.tc-box a { color:var(--accent); font-weight:700; }
+
+/* ORDER SUMMARY */
+.order-summary { background:#fff; border:1px solid var(--border); border-radius:16px; overflow:hidden; position:sticky; top:80px; }
+.sum-header { padding:18px 22px; background:linear-gradient(135deg,var(--accent),#ff8a6a); color:#fff; font-family:'DM Serif Display',serif; font-size:1.2rem; }
+.sum-body { padding:22px; }
+.sum-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); font-size:.86rem; }
+.sum-row:last-of-type { border-bottom:none; }
+.sum-label { color:var(--muted); }
+.sum-val { font-weight:600; }
+.sum-total { display:flex; justify-content:space-between; align-items:center; padding:14px 0 0; margin-top:6px; border-top:2px solid var(--ink); }
+.sum-total-label { font-weight:700; font-size:.95rem; }
+.sum-total-val { font-family:'DM Serif Display',serif; font-size:1.75rem; color:var(--green); }
+.timeline { margin-top:18px; padding-top:18px; border-top:1px solid var(--border); }
+.tl-heading { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:11px; }
+.tl-step { display:flex; gap:11px; margin-bottom:10px; align-items:flex-start; }
+.tl-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:5px; flex-shrink:0; }
+.tl-label { font-size:.8rem; font-weight:700; }
+.tl-date  { font-size:.74rem; color:var(--muted); }
+.submit-btn { width:100%; padding:15px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:.95rem; font-weight:700; cursor:pointer; margin-top:18px; transition:all .25s; font-family:'DM Sans',sans-serif; }
+.submit-btn:hover { background:var(--accent-hover); transform:translateY(-1px); box-shadow:0 8px 24px rgba(255,92,53,.3); }
+.submit-note { text-align:center; font-size:.74rem; color:var(--muted); margin-top:8px; }
+
+/* TERMS */
+#terms { background:#fff; }
+.terms-layout { display:grid; grid-template-columns:220px 1fr; gap:44px; margin-top:44px; }
+.terms-nav { position:sticky; top:80px; height:fit-content; }
+.terms-nav-title { font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; font-family:'Space Mono',monospace; }
+.terms-nav a { display:block; padding:7px 11px; font-size:.83rem; color:var(--muted); text-decoration:none; border-radius:6px; transition:all .2s; cursor:pointer; }
+.terms-nav a:hover,.terms-nav a.active { background:var(--accent-pale); color:var(--ink); font-weight:600; }
+.tc-section { background:var(--off-white); border:1px solid var(--border); border-radius:12px; padding:26px 30px; margin-bottom:14px; }
+.tc-section-title { font-family:'DM Serif Display',serif; font-size:1.2rem; margin-bottom:14px; display:flex; align-items:center; gap:11px; }
+.tc-section p { font-size:.86rem; color:var(--muted); line-height:1.75; margin-bottom:11px; }
+.tc-section p:last-child { margin-bottom:0; }
+.tc-section ul { padding-left:18px; margin-top:7px; }
+.tc-section ul li { font-size:.86rem; color:var(--muted); line-height:1.75; margin-bottom:4px; }
+.tc-highlight { background:#fff; border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:11px 15px; margin:11px 0; font-size:.84rem; color:var(--ink); font-weight:500; }
+
+/* FAQ */
+#faq { background:var(--off-white); }
+.faq-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:44px; }
+.faq-item { background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.faq-q { padding:18px 22px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:600; font-size:.9rem; transition:background .2s; }
+.faq-q:hover { background:var(--off-white); }
+.faq-toggle { font-size:1.2rem; color:var(--accent); transition:transform .25s; font-weight:300; }
+.faq-item.open .faq-toggle { transform:rotate(45deg); }
+.faq-a { max-height:0; overflow:hidden; transition:max-height .3s ease,padding .3s; font-size:.86rem; color:var(--muted); line-height:1.7; padding:0 22px; }
+.faq-item.open .faq-a { max-height:300px; padding:0 22px 18px; }
+
+/* FOOTER */
+footer { background:#111118; color:rgba(255,255,255,.55); padding:48px 5vw 28px; }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:44px; margin-bottom:36px; }
+.footer-logo { font-family:'DM Serif Display',serif; font-size:1.5rem; color:#fff; margin-bottom:10px; }
+.footer-logo span { color:var(--accent-light); }
+.footer-tagline { font-size:.84rem; line-height:1.6; }
+.footer-col h4 { font-weight:700; color:#fff; font-size:.82rem; margin-bottom:14px; letter-spacing:.05em; text-transform:uppercase; }
+.footer-col ul { list-style:none; }
+.footer-col ul li { margin-bottom:8px; }
+.footer-col a { color:rgba(255,255,255,.5); text-decoration:none; font-size:.84rem; transition:color .2s; }
+.footer-col a:hover { color:#fff; }
+.footer-bottom { border-top:1px solid rgba(255,255,255,.1); padding-top:22px; display:flex; justify-content:space-between; align-items:center; font-size:.78rem; }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s; backdrop-filter:blur(4px); }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:#fff; border-radius:16px; width:90%; max-width:460px; padding:36px; position:relative; transform:translateY(20px); transition:transform .25s; max-height:90vh; overflow-y:auto; }
+.modal-overlay.open .modal { transform:translateY(0); }
+.modal-close { position:absolute; top:14px; right:16px; background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--muted); }
+.modal-close:hover { color:var(--ink); }
+.modal h2 { font-family:'DM Serif Display',serif; font-size:1.5rem; margin-bottom:6px; }
+.modal p { font-size:.88rem; color:var(--muted); margin-bottom:20px; }
+.modal-form { display:flex; flex-direction:column; gap:13px; }
+.success-msg { text-align:center; padding:18px; background:var(--green-bg); border-radius:10px; color:var(--green); font-weight:600; display:none; margin-top:14px; }
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero { grid-template-columns:1fr; }
+  .hero-right { display:none; }
+  .steps-grid { grid-template-columns:1fr 1fr; }
+  .catalog-grid { grid-template-columns:1fr 1fr; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .price-card.featured { transform:none; }
+  .order-layout { grid-template-columns:1fr; }
+  .order-summary { position:static; }
+  .faq-grid { grid-template-columns:1fr; }
+  .terms-layout { grid-template-columns:1fr; }
+  .terms-nav { display:none; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .nav-links { display:none; }
+}
+@media(max-width:500px){
+  .catalog-grid { grid-template-columns:1fr; }
+  .hero-stats { gap:20px; }
+  .footer-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Print<span>Wave</span></div>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#catalog">Products</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#order">Order</a></li>
+    <li><a href="#terms">T&amp;C</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">Start Order →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">🇧🇩 Bangladesh → 🇺🇸 USA</div>
+    <h1>Premium Prints.<br><em>Global Reach.</em><br>Local Margins.</h1>
+
+    <div class="hero-pills">
+      <div class="vpill save">
+        <span class="vpill-icon">💰</span>
+        <div>
+          <div class="vpill-title">20–25% Cheaper</div>
+          <div class="vpill-sub">vs. US local market prices</div>
+        </div>
+      </div>
+      <div class="vpill fab">
+        <span class="vpill-icon">🏆</span>
+        <div>
+          <div class="vpill-title">World-Class Fabric</div>
+          <div class="vpill-sub">GOTS &amp; OEKO-TEX certified</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hero-sub">Source premium custom apparel from Bangladesh's textile industry — the same factories supplying H&amp;M, Zara &amp; Gap — delivered to your US customers. Profitable MOQs, 21–25 day delivery, full transparency.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('order').scrollIntoView({behavior:'smooth'})">Place an Order ↗</button>
+      <a href="#catalog" class="btn-outline">Browse Products</a>
+    </div>
+    <div class="hero-stats">
+      <div><span class="stat-num">40–60%</span><span class="stat-label">Avg. Profit Margin</span></div>
+      <div><span class="stat-num">21–25d</span><span class="stat-label">USA Delivery</span></div>
+      <div><span class="stat-num">50 pcs</span><span class="stat-label">Min. Order</span></div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card">
+      <div class="hcard-header">
+        <span class="hcard-title">Live Order Preview</span>
+        <span class="hcard-badge">PROFITABLE</span>
+      </div>
+      <div class="hcard-body">
+        <div class="prod-row">
+          <div class="prod-swatch">👕</div>
+          <div><div class="prod-name">Unisex Tee — 180gsm</div><div class="prod-meta">100 pcs · Mixed S-XL</div></div>
+          <div class="prod-price">+$1,200</div>
+        </div>
+        <div class="prod-row">
+          <div class="prod-swatch" style="background:#eef4f0;">🧢</div>
+          <div><div class="prod-name">Structured Cap</div><div class="prod-meta">50 pcs · One size</div></div>
+          <div class="prod-price">+$475</div>
+        </div>
+        <div class="prod-row">
+          <div class="prod-swatch" style="background:#fde8e4;">🛍️</div>
+          <div><div class="prod-name">Canvas Tote — 12oz</div><div class="prod-meta">75 pcs · Natural</div></div>
+          <div class="prod-price">+$562</div>
+        </div>
+        <div class="ship-notice">🚢 Sea freight included — ETA 21–25 days after confirmation</div>
+        <div class="moq-bar">
+          <div class="moq-label"><span>MOQ Progress</span><span style="color:var(--accent)">150/200 pcs</span></div>
+          <div class="moq-track"><div class="moq-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="sec-label">// The Process</div>
+  <h2 class="sec-title">From idea to doorstep<br>in 4 simple steps</h2>
+  <p class="sec-sub">We handle sourcing, production, quality control, and international logistics — you focus on selling.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <span class="step-icon">🎨</span>
+      <div class="step-title">Submit Design &amp; Order</div>
+      <div class="step-desc">Upload your artwork (AI, PDF, PNG 300dpi+) and confirm product specs, quantities, and sizing.</div>
+      <div class="step-time">⏱ Day 1</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <span class="step-icon">🏭</span>
+      <div class="step-title">Production in Bangladesh</div>
+      <div class="step-desc">Produced in GOTS-certified partner factories in Dhaka/Chittagong. Inspected before packing.</div>
+      <div class="step-time">⏱ Days 2–10</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <span class="step-icon">🚢</span>
+      <div class="step-title">Air or Sea Freight to USA</div>
+      <div class="step-desc">Consolidated shipment via sea (Miami/LA/NY) or air freight for premium orders. Full tracking.</div>
+      <div class="step-time">⏱ Days 10–20</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <span class="step-icon">📦</span>
+      <div class="step-title">US Delivery &amp; Fulfillment</div>
+      <div class="step-desc">Cleared through customs and delivered to your warehouse or 3PL/FBA center.</div>
+      <div class="step-time">⏱ Days 21–25</div>
+    </div>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section id="catalog">
+  <div class="sec-label">// Products</div>
+  <h2 class="sec-title">Our product catalog</h2>
+  <p class="sec-sub">Premium Bangladesh-sourced garments. All margins shown at recommended US retail price.</p>
+  <div class="catalog-grid">
+    <div class="cat-card">
+      <div class="cat-img">👕<div class="cat-tag">BESTSELLER</div></div>
+      <div class="cat-info">
+        <div class="cat-name">Unisex T-Shirt</div>
+        <div class="cat-fabric">180gsm combed cotton · S–3XL · Custom print</div>
+        <div class="cat-pricing">
+          <div><div class="price-cogs">Cost: ~$4.50–6.50 landed</div><div class="price-sell">$22–28 retail</div></div>
+          <div class="price-margin">~55% margin</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-img" style="background:#eef4f0;">🧥<div class="cat-tag">POPULAR</div></div>
+      <div class="cat-info">
+        <div class="cat-name">Pullover Hoodie</div>
+        <div class="cat-fabric">320gsm fleece · Unisex · Front + back print</div>
+        <div class="cat-pricing">
+          <div><div class="price-cogs">Cost: ~$11–15 landed</div><div class="price-sell">$48–65 retail</div></div>
+          <div class="price-margin">~50% margin</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-img" style="background:#fdf0ec;">🧢</div>
+      <div class="cat-info">
+        <div class="cat-name">Structured Cap</div>
+        <div class="cat-fabric">5-panel cotton twill · Embroidered logo</div>
+        <div class="cat-pricing">
+          <div><div class="price-cogs">Cost: ~$5–8 landed</div><div class="price-sell">$28–35 retail</div></div>
+          <div class="price-margin">~60% margin</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-img" style="background:#f0eef8;">🩳</div>
+      <div class="cat-info">
+        <div class="cat-name">Shorts / Joggers</div>
+        <div class="cat-fabric">French terry · Elastic waist · Custom tag</div>
+        <div class="cat-pricing">
+          <div><div class="price-cogs">Cost: ~$7–10 landed</div><div class="price-sell">$32–42 retail</div></div>
+          <div class="price-margin">~52% margin</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-img" style="background:#f0f4ec;">🛍️<div class="cat-tag">LOW MOQ</div></div>
+      <div class="cat-info">
+        <div class="cat-name">Canvas Tote Bag</div>
+        <div class="cat-fabric">12oz natural canvas · Screen print</div>
+        <div class="cat-pricing">
+          <div><div class="price-cogs">Cost: ~$3–5 landed</div><div class="price-sell">$18–24 retail</div></div>
+          <div class="price-margin">~65% margin</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-img" style="background:#faf0e4;">🧦</div>
+      <div class="cat-info">
+        <div class="cat-name">Custom Socks</div>
+        <div class="cat-fabric">200-needle knit · Full sublimation</div>
+        <div class="cat-pricing">
+          <div><div class="price-cogs">Cost: ~$2.50–4 landed</div><div class="price-sell">$14–18 retail</div></div>
+          <div class="price-margin">~60% margin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="sec-label">// Pricing Tiers</div>
+  <h2 class="sec-title">MOQ-based pricing</h2>
+  <p class="sec-sub">Higher quantity = lower cost per unit = better margins. Start small, scale fast.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">STARTER</div>
+      <div class="price-name">Seed</div>
+      <div class="price-moq">Minimum 50 pieces per design</div>
+      <div class="price-row"><span class="price-from">from</span><span class="price-amt">$6.50</span><span class="price-per">/pc landed</span></div>
+      <div class="price-margin-tag">~48–52% avg. margin</div>
+      <ul class="price-features">
+        <li>50–99 pieces</li>
+        <li>2 color print included</li>
+        <li>Standard sea freight</li>
+        <li>21–25 day delivery</li>
+        <li>Basic quality report</li>
+        <li>Email support</li>
+      </ul>
+      <button class="price-btn" onclick="openModal('Seed')">Get Started</button>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">⭐ RECOMMENDED</div>
+      <div class="price-name">Growth</div>
+      <div class="price-moq">Minimum 100 pieces per design</div>
+      <div class="price-row"><span class="price-from">from</span><span class="price-amt">$5.20</span><span class="price-per">/pc landed</span></div>
+      <div class="price-margin-tag">~55–60% avg. margin</div>
+      <ul class="price-features">
+        <li>100–299 pieces</li>
+        <li>4 color print included</li>
+        <li>Priority sea freight</li>
+        <li>21–25 day delivery</li>
+        <li>Full QC photo report</li>
+        <li>Woven label option</li>
+        <li>Dedicated rep</li>
+      </ul>
+      <button class="price-btn" onclick="openModal('Growth')">Start with Growth</button>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">VOLUME</div>
+      <div class="price-name">Scale</div>
+      <div class="price-moq">Minimum 300 pieces per design</div>
+      <div class="price-row"><span class="price-from">from</span><span class="price-amt">$3.80</span><span class="price-per">/pc landed</span></div>
+      <div class="price-margin-tag">~60–65% avg. margin</div>
+      <ul class="price-features">
+        <li>300+ pieces</li>
+        <li>Full custom printing</li>
+        <li>Air or sea freight</li>
+        <li>18–22 day delivery</li>
+        <li>Pre-shipment inspection</li>
+        <li>Private label + hang tags</li>
+        <li>Custom packaging</li>
+        <li>Priority support</li>
+      </ul>
+      <button class="price-btn" onclick="openModal('Scale')">Talk to Sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <div class="sec-label">// Place Order</div>
+  <h2 class="sec-title">Ready to get started?</h2>
+  <p class="sec-sub">Fill out your order details. We'll respond with a detailed quote within 24 business hours.</p>
+  <div class="order-layout">
+    <div>
+      <!-- 1: Business Info -->
+      <div class="form-sec">
+        <div class="form-sec-title"><div class="form-sec-num">1</div> Business Information</div>
+        <div class="form-grid">
+          <div><label>Business Name *</label><input type="text" id="biz-name" placeholder="Your brand or company name"></div>
+          <div><label>Contact Name *</label><input type="text" id="contact-name" placeholder="Full name"></div>
+          <div><label>Email Address *</label><input type="email" id="email" placeholder="you@yourstore.com"></div>
+          <div><label>Phone / WhatsApp</label><input type="text" id="phone" placeholder="+1 (555) 000-0000"></div>
+          <div class="form-full"><label>Website / Store URL</label><input type="text" id="website" placeholder="https://yourstore.com"></div>
+          <div><label>US Delivery State *</label>
+            <select id="state"><option value="">Select state...</option><option>California</option><option>Texas</option><option>Florida</option><option>New York</option><option>Illinois</option><option>Pennsylvania</option><option>Ohio</option><option>Georgia</option><option>Other</option></select>
+          </div>
+          <div><label>Business Type</label>
+            <select id="biz-type"><option value="">Select...</option><option>E-commerce (Shopify/WooCommerce)</option><option>Marketplace (Etsy/Amazon)</option><option>Print on Demand Reseller</option><option>Brand / Startup</option><option>Promotional / Corporate</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2: Product Details -->
+      <div class="form-sec">
+        <div class="form-sec-title"><div class="form-sec-num">2</div> Product &amp; Design Details</div>
+        <div class="form-grid">
+          <div><label>Product Type *</label>
+            <select id="product-type" onchange="updateSummary()">
+              <option value="">Select product...</option>
+              <option value="tshirt">Unisex T-Shirt (180gsm)</option>
+              <option value="hoodie">Pullover Hoodie (320gsm)</option>
+              <option value="cap">Structured Cap</option>
+              <option value="shorts">Shorts / Joggers</option>
+              <option value="tote">Canvas Tote Bag</option>
+              <option value="socks">Custom Socks</option>
+            </select>
+          </div>
+          <div><label>Print Method</label>
+            <select id="print-method"><option>Screen Print (best value)</option><option>DTF — Direct to Film</option><option>Embroidery</option><option>Sublimation (AOP)</option><option>Discharge Print</option></select>
+          </div>
+          <div><label>Print Location(s)</label>
+            <select id="print-location"><option>Front only</option><option>Back only</option><option>Front + Back</option><option>Left chest + Back</option><option>All-over print</option></select>
+          </div>
+          <div><label>Number of Colors</label>
+            <select id="num-colors"><option>1 color</option><option>2 colors</option><option>3 colors</option><option>4 colors</option><option>Full color / CMYK</option></select>
+          </div>
+          <div class="form-full"><label>Size Breakdown *</label><input type="text" id="sizes" placeholder="e.g. 20×S, 40×M, 30×L, 10×XL"></div>
+          <div>
+            <label>Quantity *</label>
+            <div class="qty-wrap">
+              <button class="qty-btn" onclick="changeQty(-10)">−</button>
+              <input type="number" id="qty" value="100" min="50" step="10" onchange="updateSummary()" oninput="updateSummary()">
+              <button class="qty-btn" onclick="changeQty(10)">+</button>
+            </div>
+          </div>
+          <div><label>Garment Color</label><input type="text" id="color" placeholder="e.g. Black, White, Navy"></div>
+          <div class="form-full"><label>Custom Label / Hang Tag?</label>
+            <select id="label-option"><option>No label needed</option><option>Woven neck label (+$0.60/pc)</option><option>Printed neck label (+$0.40/pc)</option><option>Hang tag (+$0.30/pc)</option><option>Full custom packaging (quote separately)</option></select>
+          </div>
+          <div class="form-full"><label>Design Notes / Special Instructions</label>
+            <textarea id="notes" placeholder="Pantone colors, placement measurements, reference URLs, special fabric requests..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3: Shipping -->
+      <div class="form-sec">
+        <div class="form-sec-title"><div class="form-sec-num">3</div> Shipping Preferences</div>
+        <div class="form-grid">
+          <div><label>Shipping Method *</label>
+            <select id="shipping-method" onchange="updateSummary()">
+              <option value="sea">Sea Freight (21–25 days) — Included</option>
+              <option value="air">Air Freight (10–14 days) — +$2.50/pc</option>
+            </select>
+          </div>
+          <div><label>Delivery Destination</label>
+            <select><option>My warehouse / home</option><option>3PL fulfillment center</option><option>Amazon FBA warehouse</option><option>Multiple destinations</option></select>
+          </div>
+          <div class="form-full"><label>Delivery Address / Zip Code</label><input type="text" id="delivery-address" placeholder="Full address or zip code"></div>
+        </div>
+      </div>
+
+      <!-- T&C agree -->
+      <div class="tc-box">
+        <input type="checkbox" id="tc-agree">
+        <label for="tc-agree">I have read and agree to PrintWave's <a href="#terms">Terms &amp; Conditions</a>, including MOQ requirements, payment terms, production timelines, and the return/quality policy. I understand the 21–25 day delivery window begins after final design approval and cleared payment.</label>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div>
+      <div class="order-summary">
+        <div class="sum-header">Order Summary</div>
+        <div class="sum-body">
+          <div class="sum-row"><span class="sum-label">Product</span><span class="sum-val" id="sum-product">—</span></div>
+          <div class="sum-row"><span class="sum-label">Quantity</span><span class="sum-val" id="sum-qty">100 pcs</span></div>
+          <div class="sum-row"><span class="sum-label">Tier</span><span class="sum-val" id="sum-tier">Growth (100+)</span></div>
+          <div class="sum-row"><span class="sum-label">Cost/pc (landed)</span><span class="sum-val" id="sum-cpp">~$5.20</span></div>
+          <div class="sum-row"><span class="sum-label">Shipping</span><span class="sum-val" id="sum-ship">Sea — Included</span></div>
+          <div class="sum-row"><span class="sum-label">Total Cost</span><span class="sum-val" id="sum-cost">~$520</span></div>
+          <div class="sum-row"><span class="sum-label">Suggested Retail</span><span class="sum-val" id="sum-retail">$24/pc</span></div>
+          <div class="sum-row"><span class="sum-label">Potential Revenue</span><span class="sum-val" id="sum-rev" style="color:var(--green)">~$2,400</span></div>
+          <div class="sum-total">
+            <span class="sum-total-label">Est. Profit</span>
+            <span class="sum-total-val" id="sum-profit">~$1,880</span>
+          </div>
+          <div class="timeline">
+            <div class="tl-heading">Delivery Timeline</div>
+            <div class="tl-step"><div class="tl-dot"></div><div><div class="tl-label">Order Confirmed</div><div class="tl-date">Day 1 — Payment cleared</div></div></div>
+            <div class="tl-step"><div class="tl-dot" style="background:var(--gold)"></div><div><div class="tl-label">Production Complete</div><div class="tl-date">Days 8–12</div></div></div>
+            <div class="tl-step"><div class="tl-dot" style="background:var(--muted)"></div><div><div class="tl-label">Shipped from BD</div><div class="tl-date">Days 12–14</div></div></div>
+            <div class="tl-step"><div class="tl-dot" style="background:var(--green)"></div><div><div class="tl-label">Delivered USA 🇺🇸</div><div class="tl-date" id="sum-eta">Days 21–25</div></div></div>
+          </div>
+          <button class="submit-btn" onclick="submitOrder()">Submit Order Request →</button>
+          <div class="submit-note">No payment now — we'll send a quote within 24hrs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMS -->
+<section id="terms">
+  <div class="sec-label">// Legal</div>
+  <h2 class="sec-title">Terms &amp; Conditions</h2>
+  <p class="sec-sub">Please read carefully before placing an order. By submitting an order you agree to all terms below.</p>
+  <div class="terms-layout">
+    <div class="terms-nav">
+      <div class="terms-nav-title">Contents</div>
+      <a onclick="scrollTerm('tc1')" class="active">1. Definitions</a>
+      <a onclick="scrollTerm('tc2')">2. Order &amp; MOQ</a>
+      <a onclick="scrollTerm('tc3')">3. Payment Terms</a>
+      <a onclick="scrollTerm('tc4')">4. Design &amp; IP</a>
+      <a onclick="scrollTerm('tc5')">5. Production &amp; QC</a>
+      <a onclick="scrollTerm('tc6')">6. Shipping &amp; Delivery</a>
+      <a onclick="scrollTerm('tc7')">7. Returns &amp; Claims</a>
+      <a onclick="scrollTerm('tc8')">8. Cancellations</a>
+      <a onclick="scrollTerm('tc9')">9. Liability</a>
+      <a onclick="scrollTerm('tc10')">10. Privacy</a>
+      <a onclick="scrollTerm('tc11')">11. Governing Law</a>
+    </div>
+    <div>
+      <div class="tc-section" id="tc1">
+        <div class="tc-section-title">📋 1. Definitions</div>
+        <p>"PrintWave" refers to the company operating this platform. "Client" refers to the business or individual placing an order. "Order" means a confirmed purchase of custom printed goods. "Goods" means the custom apparel produced under the Order. "Production Day" means any working day (Mon–Sat) at our Bangladesh facility. "Delivery Window" means the 21–25 calendar day period from Order Confirmation to delivery at the Client's US address.</p>
+      </div>
+      <div class="tc-section" id="tc2">
+        <div class="tc-section-title">📦 2. Order Placement &amp; MOQ</div>
+        <div class="tc-highlight">⚠️ Minimum Order Quantity: 50 pieces per design per product type. Orders below this cannot be accepted.</div>
+        <p>An order is confirmed only upon receipt of: (a) completed order form with full specs, (b) final approved design files (AI/PDF/PNG at 300dpi min), (c) 50% deposit cleared, (d) written approval of the digital proof. PrintWave reserves the right to reject orders containing offensive, discriminatory, or infringing content.</p>
+      </div>
+      <div class="tc-section" id="tc3">
+        <div class="tc-section-title">💳 3. Payment Terms</div>
+        <div class="tc-highlight">💡 50% deposit to begin production + 50% balance before shipment release.</div>
+        <p>Accepted methods: Bank wire (ACH/SWIFT), PayPal Business, Wise. Credit cards accepted at 3% surcharge. All prices in USD, valid 14 days from quotation. Balance due within 5 business days of shipment-ready notification; late payment incurs $15/day storage. All transfer fees are the Client's responsibility.</p>
+      </div>
+      <div class="tc-section" id="tc4">
+        <div class="tc-section-title">🎨 4. Design Files &amp; Intellectual Property</div>
+        <p>By submitting design files, the Client warrants they own or are licensed to use all artwork, logos, and text. The Client indemnifies PrintWave against any IP infringement claims. Design files are used solely to produce the Client's order and will not be shared or resold. A digital proof is provided within 48–72 hours; production begins only after written proof approval.</p>
+        <div class="tc-highlight">🖨️ All print files must be vector (AI/PDF) or 300dpi+ PNG. PrintWave is not responsible for quality issues from low-resolution files.</div>
+      </div>
+      <div class="tc-section" id="tc5">
+        <div class="tc-section-title">🏭 5. Production &amp; Quality Control</div>
+        <p>Standard production: 8–12 production days after confirmed order, approved proof, and cleared deposit. Rush (5–7 days) available at 20% surcharge. Industry tolerance: up to 3% minor defects is accepted; PrintWave replaces or credits items exceeding this. Color variance up to 10–15% from digital mockups is normal. Size tolerance: ±0.5 inches is standard. Pre-shipment photo reports provided for Growth and Scale orders.</p>
+      </div>
+      <div class="tc-section" id="tc6">
+        <div class="tc-section-title">🚢 6. Shipping &amp; Delivery</div>
+        <div class="tc-highlight">📅 The 21–25 day window starts from Order Confirmation (after design approval + deposit cleared) — not from form submission.</div>
+        <p>Standard delivery: sea freight to US ports (LA, Miami, NY/Newark, Houston). Air freight available at extra charge (10–14 days). Included: sea freight, origin handling, export docs. NOT included: US customs duties, ISF filing, destination drayage, last-mile delivery (unless stated in quote). Risk transfers to Client at FOB Chittagong/Dhaka. Delays from port congestion, customs holds, or force majeure are outside PrintWave's control.</p>
+      </div>
+      <div class="tc-section" id="tc7">
+        <div class="tc-section-title">↩️ 7. Returns &amp; Claims</div>
+        <p>Claims for defective or incorrect goods must be submitted within 14 calendar days of delivery with photo evidence. Remedies: replacement in a future run or credit equal to defective unit cost. Returns are NOT accepted for: change of mind, slow sales, incorrect size selection by Client, color variation within tolerance, or minor manufacturing characteristics.</p>
+        <div class="tc-highlight">🚫 Custom-manufactured goods are non-refundable once production has commenced.</div>
+      </div>
+      <div class="tc-section" id="tc8">
+        <div class="tc-section-title">❌ 8. Cancellations &amp; Modifications</div>
+        <p>Cancellation policy:</p>
+        <ul>
+          <li><strong>Before proof approval:</strong> Full deposit refund minus $75 admin fee.</li>
+          <li><strong>After proof approval, before production:</strong> 25% of total order value forfeited.</li>
+          <li><strong>During production (Days 1–6):</strong> 50% forfeited.</li>
+          <li><strong>After production completion:</strong> 100% forfeited; goods may be shipped at Client's cost.</li>
+        </ul>
+      </div>
+      <div class="tc-section" id="tc9">
+        <div class="tc-section-title">⚖️ 9. Limitation of Liability</div>
+        <p>PrintWave's total liability shall not exceed the total amount paid for that specific order. PrintWave is not liable for indirect, consequential, or special damages including lost profits. PrintWave is not responsible for delays caused by force majeure, customs holds, incorrect address information, or carrier failures. The Client is solely responsible for ensuring product compliance with US labeling laws and import regulations.</p>
+      </div>
+      <div class="tc-section" id="tc10">
+        <div class="tc-section-title">🔒 10. Privacy &amp; Data</div>
+        <p>PrintWave collects business and contact information solely for order processing and communication. We do not sell client data to third parties. Design files are stored securely and deleted 90 days after order completion. Clients may request data deletion at any time by contacting support.</p>
+      </div>
+      <div class="tc-section" id="tc11">
+        <div class="tc-section-title">🏛️ 11. Governing Law &amp; Disputes</div>
+        <p>These Terms are governed by the laws of the State of Delaware, USA. Disputes shall be submitted to binding arbitration under AAA Commercial Arbitration Rules, conducted in English in Delaware. These Terms constitute the entire agreement and supersede all prior understandings.</p>
+        <p style="font-weight:700;color:var(--ink);">Last updated: April 2026 · Version 1.0</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="sec-label">// Questions</div>
+  <h2 class="sec-title">Frequently asked</h2>
+  <p class="sec-sub">Everything startup founders need to know before their first order.</p>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Why Bangladesh? Is quality good?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Bangladesh is the world's 2nd largest garment exporter, home to BGMEA-certified factories producing for H&M, Zara, and Gap. Our partner factories are GOTS and OEKO-TEX certified. You get comparable quality at 20–35% lower cost than other Asian sources.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How does 21–25 day delivery work exactly?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">The clock starts after design approval AND 50% deposit cleared. Production takes 8–12 days, sea freight 7–10 days, customs clearance 1–2 days. The 21–25 day window includes buffers — it's reliable, not best-case.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What if I'm a new brand with no customers yet?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Perfect — our 50-piece Seed tier is designed for brand launches. Test a design for as little as $325–400 landed, sell at $20–28 retail, and still hit 50%+ margins. Many clients pre-sell on Etsy or Kickstarter before ordering.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Do you handle US customs and import duties?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">We handle export documentation from Bangladesh. US import duties are the importer's responsibility. Most apparel from Bangladesh falls under HTS Chapter 61/62 with duties of 12–32% by product type. We provide all docs needed for clearance.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I get samples before a full order?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes. Sample orders (1–5 pcs) are available at 3× the unit price plus $35 air freight. Turnaround is 12–15 days. Sample costs are credited toward your first bulk order of 50+ pieces.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can you ship directly to Amazon FBA?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes, with FBA prep compliance: FNSKU barcodes, poly bagging, carton labeling per Amazon requirements. Available for Growth and Scale tier orders. Confirm FBA prep needs when submitting your order.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What file formats do you accept?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">We prefer AI (Adobe Illustrator) or PDF vector files. For DTF and sublimation, high-res PNG (300dpi+) at print size. We offer a free design check — send your files and we'll flag quality issues before production.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">USD bank wire transfer (preferred, no fees), Wise/TransferWise, and PayPal Business. Credit/debit cards via Stripe at 3% surcharge. Crypto available on request for Scale tier orders.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Print<span>Wave</span></div>
+      <div class="footer-tagline">Premium custom apparel from Bangladesh's finest factories, delivered to US businesses. Profitable margins, reliable timelines.</div>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="#catalog">T-Shirts</a></li>
+        <li><a href="#catalog">Hoodies</a></li>
+        <li><a href="#catalog">Caps</a></li>
+        <li><a href="#catalog">Tote Bags</a></li>
+        <li><a href="#catalog">Socks</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#terms">Terms &amp; Conditions</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@printwave.co">hello@printwave.co</a></li>
+        <li><a href="#">WhatsApp Support</a></li>
+        <li><a href="#">Schedule a Call</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 PrintWave. All rights reserved.</div>
+    <div>🇧🇩 Sourced in Bangladesh &nbsp;·&nbsp; 🇺🇸 Delivered in USA</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2>Start Your Order</h2>
+    <p>Tell us your basics and we'll send a full quote within 24 hours.</p>
+    <div class="modal-form">
+      <div><label>Your Name</label><input type="text" id="m-name" placeholder="Full name"></div>
+      <div><label>Business Email</label><input type="email" id="m-email" placeholder="you@yourstore.com"></div>
+      <div><label>Product &amp; Quantity</label><input type="text" id="m-product" placeholder="e.g. 100x T-shirts, printed logo"></div>
+      <div><label>Selected Tier</label><input type="text" id="m-tier" readonly style="background:var(--off-white)"></div>
+      <button class="submit-btn" style="margin-top:4px" onclick="submitModal()">Send Inquiry →</button>
+    </div>
+    <div class="success-msg" id="modal-success">✅ Inquiry received! We'll send your quote within 24 business hours.</div>
+  </div>
+</div>
+
+<script>
+const products = {
+  tshirt:{name:'Unisex T-Shirt',retail:24},
+  hoodie:{name:'Pullover Hoodie',retail:55},
+  cap:{name:'Structured Cap',retail:30},
+  shorts:{name:'Shorts / Joggers',retail:36},
+  tote:{name:'Canvas Tote',retail:20},
+  socks:{name:'Custom Socks',retail:15}
+};
+
+function getCpp(q){ return q>=300?3.80:q>=100?5.20:6.50; }
+function getTier(q){ return q>=300?'Scale (300+)':q>=100?'Growth (100+)':'Seed (50+)'; }
+
+function updateSummary(){
+  const qty = Math.max(50, parseInt(document.getElementById('qty').value)||100);
+  const pk  = document.getElementById('product-type').value;
+  const air = document.getElementById('shipping-method').value==='air';
+  let cpp = getCpp(qty)+(air?2.5:0);
+  const p = products[pk];
+  const retail = p?p.retail:24;
+  const cost = Math.round(cpp*qty);
+  const rev = retail*qty;
+  document.getElementById('sum-product').textContent = p?p.name:'—';
+  document.getElementById('sum-qty').textContent = qty+' pcs';
+  document.getElementById('sum-tier').textContent = getTier(qty);
+  document.getElementById('sum-cpp').textContent = '~$'+cpp.toFixed(2);
+  document.getElementById('sum-ship').textContent = air?'Air (+$2.50/pc)':'Sea — Included';
+  document.getElementById('sum-cost').textContent = '~$'+cost.toLocaleString();
+  document.getElementById('sum-retail').textContent = '$'+retail+'/pc';
+  document.getElementById('sum-rev').textContent = '~$'+rev.toLocaleString();
+  document.getElementById('sum-profit').textContent = '~$'+(rev-cost).toLocaleString();
+  document.getElementById('sum-eta').textContent = air?'Days 10–14':'Days 21–25';
+}
+
+function changeQty(d){
+  const el=document.getElementById('qty');
+  el.value=Math.max(50,(parseInt(el.value)||100)+d);
+  updateSummary();
+}
+
+updateSummary();
+
+function submitOrder(){
+  if(!document.getElementById('tc-agree').checked){
+    alert('Please agree to the Terms & Conditions first.');
+    document.getElementById('terms').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  const n=document.getElementById('contact-name').value.trim();
+  const e=document.getElementById('email').value.trim();
+  const b=document.getElementById('biz-name').value.trim();
+  if(!n||!e||!b){ alert('Please fill in name, email, and business name.'); return; }
+  const btn=document.querySelector('.submit-btn');
+  btn.textContent='✅ Order Request Submitted!';
+  btn.style.background='var(--green)';
+  btn.disabled=true;
+  setTimeout(()=>{ btn.textContent='Submit Order Request →'; btn.style.background=''; btn.disabled=false; },4000);
+}
+
+function openModal(tier){
+  document.getElementById('m-tier').value=tier;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+}
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+function submitModal(){
+  document.getElementById('modal-success').style.display='block';
+  setTimeout(closeModal,3000);
+}
+
+function toggleFaq(el){
+  el.parentElement.classList.toggle('open');
+}
+
+function scrollTerm(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.terms-nav a').forEach(a=>a.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
